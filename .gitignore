@@ -1,31 +1,49 @@
-# Dependencies
-node_modules/
+# Agent test artifacts (local)
+rai.json
+run_*.jsonl
+run_*.err
+nav_fix.md
+auth_fix.md
 
-# Build output
-dist/
-.next/
-
-# Environment
+# Env
 .env
 .env.*
 !.env.example
-!.env.production.example
 
-# RAi working files
-.rai/
-
-# Test coverage
+# Node / Next.js / NestJS
+node_modules/
+.next/
+dist/
+build/
 coverage/
+*.tsbuildinfo
 
-# Logs
-*.log
-
-# OS
+# Tooling
+.kilo/
+.idea/
+.vscode/
+*.swp
 .DS_Store
 
-# Lint cache
-.eslintcache
+# Backend build
+backend/dist/
+backend/node_modules/
+backend/coverage/
 
-# Certificates & ACME webroot (machine-specific, sinh khi deploy)
+# Frontend build
+frontend/.next/
+frontend/node_modules/
+frontend/out/
+frontend/build/
+
+# Local DB / cache
+.rai/
+*.db
+*.db-shm
+*.db-wal
+# Local run logs (full-stack older runs)
+run_error.log
+run_error2.log
+
+# TLS certs (local/dev self-signed)
 deploy/certs/
-deploy/certbot-webroot/
