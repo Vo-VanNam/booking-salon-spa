@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.next/
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# RAi working files
+.rai/
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Lint cache
+.eslintcache
+
+# Certificates & ACME webroot (machine-specific, sinh khi deploy)
+deploy/certs/
+deploy/certbot-webroot/

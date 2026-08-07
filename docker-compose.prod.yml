@@ -1,0 +1,85 @@
+# ============================================================
+# Production stack: postgres + redis + backend + frontend + nginx
+# ============================================================
+# - Project name RIENG (booking-salon-spa-prod) de KHONG xung dot voi
+#   dev stack cung thu muc: container/volume khong dung chung.
+# - KHONG publish port cua postgres/redis/backend/frontend ra host —
+#   chi nginx mo 80/443. Truy cap DB/Redis tu host qua docker exec khi can.
+# - Mot network duy nhat (default) la du cho proxy nginx -> backend/frontend.
+#   (Toi uu sau: tach network internal rieng cho postgres/redis/backend.)
+# - POSTGRES_PASSWORD lay tu .env.production:
+#     docker compose --env-file .env.production -f docker-compose.prod.yml ...
+#   hoac: set -a && source .env.production && set -a
+# ============================================================
+
+name: booking-salon-spa-prod
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: salon
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD trong .env.production}
+      POSTGRES_DB: salon_spa
+      TZ: Asia/Ho_Chi_Minh
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salon -d salon_spa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env.production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./deploy/nginx-http.conf:/etc/nginx/conf.d/http.conf:ro
+      - ./deploy/certs:/etc/letsencrypt:ro
+      - ./deploy/certbot-webroot:/var/www/certbot:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:

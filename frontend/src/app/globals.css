@@ -1,0 +1,156 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --background: #FAF7F2;
+  --foreground: #3F3A34;
+  --card: #FFFFFF;
+  --card-foreground: #3F3A34;
+  --popover: #FFFFFF;
+  --popover-foreground: #3F3A34;
+  --primary: #8B6F47;
+  --primary-foreground: #FAF7F2;
+  --secondary: #EFE7DC;
+  --secondary-foreground: #3F3A34;
+  --muted: #F1EBE2;
+  --muted-foreground: #857C70;
+  --accent: #EFE7DC;
+  --accent-foreground: #3F3A34;
+  --destructive: #B3261E;
+  --destructive-foreground: #FFFFFF;
+  --border: #E3D9CB;
+  --input: #E3D9CB;
+  --ring: #8B6F47;
+  --chart-1: #8B6F47;
+  --chart-2: #B08D5F;
+  --chart-3: #6B5637;
+  --chart-4: #D9C6A8;
+  --chart-5: #A08B68;
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-be-vietnam), system-ui, sans-serif;
+  --font-number: var(--font-inter), system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-be-vietnam), system-ui, sans-serif;
+  }
+}
+
+/* ---------- FullCalendar: đồng bộ theme be/nâu ---------- */
+.fc {
+  --fc-border-color: var(--border);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: var(--muted);
+  --fc-today-bg-color: rgba(139, 111, 71, 0.08);
+  --fc-now-indicator-color: var(--destructive);
+  --fc-highlight-color: rgba(139, 111, 71, 0.1);
+  --fc-button-bg-color: var(--secondary);
+  --fc-button-border-color: var(--border);
+  --fc-button-text-color: var(--foreground);
+  --fc-button-hover-bg-color: var(--accent);
+  --fc-button-hover-border-color: var(--border);
+  --fc-button-active-bg-color: var(--primary);
+  --fc-button-active-border-color: var(--primary);
+  --fc-button-active-text-color: var(--primary-foreground);
+  font-size: 0.875rem;
+}
+
+.fc a {
+  text-decoration: none;
+}
+
+.fc .fc-button {
+  font-weight: 500;
+  text-transform: none;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number,
+.fc .fc-timegrid-slot-label-cushion {
+  color: var(--muted-foreground);
+}
+
+.fc .fc-timegrid-event,
+.fc .fc-daygrid-event {
+  cursor: pointer;
+}
+
+.fc-custom-event {
+  padding: 1px 4px;
+  font-size: 11px;
+  line-height: 1.3;
+  overflow: hidden;
+}
+
+.fc-custom-time {
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+.fc-custom-title {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fc-booking-cancelled {
+  opacity: 0.55;
+}
+
+.fc-booking-cancelled .fc-custom-title {
+  text-decoration: line-through;
+}
+
+@media (max-width: 767px) {
+  .fc .fc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .fc .fc-toolbar-chunk {
+    display: flex;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  customer
+  stylist
+  branch_admin
+  super_admin
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  completed
+  cancelled
+  no_show
+}
+
+enum DepositStatus {
+  none
+  pending
+  paid
+  refunded
+  failed
+}
+
+enum PaymentProvider {
+  vnpay
+  momo
+}
+
+enum PaymentStatus {
+  created
+  success
+  failed
+  refunded
+}
+
+enum LoyaltyType {
+  earn
+  spend
+  adjust
+}
+
+model Branch {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  phone     String?
+  openTime  String // dinh dang "HH:mm" theo gio dia phuong VN
+  closeTime String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  services Service[]
+  stylists Stylist[]
+  bookings Booking[]
+  users    User[]
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  branchId        String
+  branch          Branch   @relation(fields: [branchId], references: [id])
+  name            String
+  description     String?
+  price           Int // VND
+  durationMinutes Int
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@index([branchId])
+}
+
+model Stylist {
+  id        String   @id @default(cuid())
+  branchId  String
+  branch    Branch   @relation(fields: [branchId], references: [id])
+  name      String
+  phone     String
+  email     String?
+  avatarUrl String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workingHours WorkingHour[]
+  timeOffs     TimeOff[]
+  bookings     Booking[]
+  user         User?
+
+  @@index([branchId])
+}
+
+model WorkingHour {
+  id        String  @id @default(cuid())
+  stylistId String
+  stylist   Stylist @relation(fields: [stylistId], references: [id], onDelete: Cascade)
+  dayOfWeek Int // 0 = Chu nhat, 1 = Thu 2 ... 6 = Thu 7
+  startTime String // "HH:mm" gio dia phuong VN
+  endTime   String // "HH:mm" gio dia phuong VN
+
+  @@unique([stylistId, dayOfWeek])
+}
+
+model TimeOff {
+  id        String   @id @default(cuid())
+  stylistId String
+  stylist   Stylist  @relation(fields: [stylistId], references: [id], onDelete: Cascade)
+  startTime DateTime
+  endTime   DateTime
+  reason    String?
+
+  @@index([stylistId, startTime, endTime])
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  name           String
+  phone          String   @unique
+  email          String?
+  completedCount Int      @default(0)
+  loyaltyPoints  Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  bookings            Booking[]
+  loyaltyTransactions LoyaltyTransaction[]
+  user                User?
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  branchId       String
+  branch         Branch        @relation(fields: [branchId], references: [id])
+  serviceId      String
+  service        Service       @relation(fields: [serviceId], references: [id])
+  stylistId      String
+  stylist        Stylist       @relation(fields: [stylistId], references: [id])
+  customerId     String
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  startTime      DateTime
+  endTime        DateTime
+  status         BookingStatus
+  depositAmount  Int           @default(0)
+  depositStatus  DepositStatus @default(none)
+  priceAtBooking Int
+  discountAmount Int           @default(0)
+  note           String?
+  cancelledAt    DateTime?
+  cancelReason   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  payments            PaymentTransaction[]
+  loyaltyTransactions LoyaltyTransaction[]
+
+  @@index([stylistId, startTime, endTime])
+  @@index([branchId, startTime])
+  @@index([customerId, status])
+}
+
+model User {
+  id               String    @id @default(cuid())
+  phone            String?   @unique
+  email            String?   @unique
+  passwordHash     String
+  role             UserRole
+  refreshTokenHash String?
+  active           Boolean   @default(true)
+  lastLoginAt      DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerId String?   @unique
+  stylist    Stylist?  @relation(fields: [stylistId], references: [id])
+  stylistId  String?   @unique
+  branch     Branch?   @relation(fields: [branchId], references: [id])
+  branchId   String?
+}
+
+model LoyaltyTransaction {
+  id         String      @id @default(cuid())
+  customerId String
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  bookingId  String?
+  booking    Booking?    @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  points     Int
+  type       LoyaltyType
+  reason     String
+  actorType  String // "system" / "admin" / "customer"
+  actorId    String?
+  createdAt  DateTime    @default(now())
+
+  @@index([customerId])
+  @@index([bookingId])
+}
+
+model PaymentTransaction {
+  id             String          @id @default(cuid())
+  bookingId      String
+  booking        Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  provider       PaymentProvider
+  amount         Int
+  status         PaymentStatus
+  providerTxnRef String
+  rawPayload     Json
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@unique([provider, providerTxnRef])
+  @@index([bookingId])
+}
