@@ -96,3 +96,7 @@ bash scripts/smoke.sh                 # health → branches → services → sty
 - VNPay/MoMo: cần merchant key thật (sandbox/production) để live-test; smoke test dùng webhook tự ký bằng cùng hàm signature.
 - Image backend ~727MB (Prisma 6 kéo `prisma` CLI vào prod deps; compressed ~230MB) — chấp nhận được cho VPS, theo dõi nếu muốn tối ưu thêm.
 - `npm run start:prod` trỏ `dist/src/main.js` (đã sửa) — luôn dùng Dockerfile production cho deploy thật.
+
+---
+
+Đây là sản phẩm của RAi-code Agentic Coding CLI được phát triển bởi Reasonary AI
