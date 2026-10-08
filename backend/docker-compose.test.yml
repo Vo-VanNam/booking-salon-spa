@@ -1,0 +1,21 @@
+name: booking-spa-test
+# Test-only Postgres. Separate project + port so `npm test` never touches (and never
+# requires) the running production stack. Data lives in tmpfs: fast and disposable.
+services:
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: booking-spa-test-postgres
+    environment:
+      POSTGRES_USER: booking
+      POSTGRES_PASSWORD: booking_test
+      POSTGRES_DB: booking_test
+      TZ: UTC
+    ports:
+      - "55433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking -d booking_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 40

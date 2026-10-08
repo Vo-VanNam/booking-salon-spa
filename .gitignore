@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.next/
+out/
+.env
+.env.*
+!.env.example
+.run/
+*.log
+.rai/
+coverage/
+*.tsbuildinfo
+nginx/certs/
+nginx/certbot-www/

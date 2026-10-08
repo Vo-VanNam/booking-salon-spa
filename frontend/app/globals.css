@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font tiếng Việt (Be Vietnam Pro) + Inter cho số liệu, nạp qua <link> trong layout
+   để không phụ thuộc bước build. Fallback system-ui luôn sẵn sàng. */
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background-color: #faf7f2;
+  color: #2b2320;
+}
+
+body {
+  font-family: 'Be Vietnam Pro', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Số liệu canh cột: dùng cho bảng, KPI, giờ */
+.tnum {
+  font-family: Inter, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(122, 92, 62, 0.35);
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Thanh cuộn mảnh cho bảng dữ liệu dày */
+.thin-scroll::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #c9b79e;
+  border-radius: 999px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: #f3ede4;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3ede4 25%, #eae1d4 37%, #f3ede4 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
